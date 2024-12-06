@@ -1,1 +1,192 @@
 
+##Tarea_Resuelta
+
+## Archivo de Cabecera complejos_cuaterniones.h
+
+#ifndef COMPLEJOS_CUATERNIONES_H
+#define COMPLEJOS_CUATERNIONES_H
+
+#include <iostream>
+#include <cmath> 
+
+using namespace std;
+
+class Complejo {
+private:
+    double re; 
+    double im;  
+    
+public:  
+    Complejo(double r = 0.0, double i = 0.0);
+
+    Complejo sumar(const Complejo& s) const;
+    Complejo restar(const Complejo& s) const;
+    Complejo multiplicar(const Complejo& s) const;
+    Complejo dividir(const Complejo& s) const;
+    void imprimir() const;
+};
+
+class Cuaternion {
+private:
+    double a, b, c, d; // Coeficientes
+    
+public:
+    Cuaternion(double w = 0.0, double x = 0.0, double y = 0.0, double z = 0.0);
+
+    Cuaternion sumar(const Cuaternion& q) const;
+    Cuaternion restar(const Cuaternion& q) const;
+    Cuaternion multiplicar(const Cuaternion& q) const;
+    Cuaternion conjugado() const;
+    double norma() const;
+    Cuaternion inversa() const;
+	void print() const;
+};
+
+//Clase Complejo
+
+Complejo::Complejo(double r, double i) : re(r), im(i) {}
+
+Complejo Complejo::sumar(const Complejo& s) const {
+    return Complejo(re + s.re, im + s.im);
+}
+Complejo Complejo::restar(const Complejo& s) const {
+    return Complejo(re - s.re, im - s.im);
+}
+Complejo Complejo::multiplicar(const Complejo& s) const {
+    return Complejo(re * s.re - im * s.im, 
+                     re * s.im + im * s.re);
+}
+Complejo Complejo::dividir(const Complejo& s) const {
+    double denom = s.re * s.re + s.im * s.im;
+    if (denom == 0) {
+        cerr << "Error: Division por cero.\n";
+        return Complejo();
+    }
+    return Complejo((re * s.re + im * s.im) / denom,
+                     (im * s.re - re * s.im) / denom);
+}
+void Complejo::imprimir() const {
+    cout << re;
+    if (im >= 0)
+        cout << " + " << im << "i";
+    else
+        cout << " - " << -im << "i";
+    cout << endl;
+}
+
+//Clase Cuaternion
+
+Cuaternion::Cuaternion(double w, double x, double y, double z) : a(w), b(x), c(y), d(z) {}
+
+Cuaternion Cuaternion::sumar(const Cuaternion& q) const {
+    return Cuaternion(a + q.a, b + q.b, c + q.c, d + q.d);
+}
+Cuaternion Cuaternion::restar(const Cuaternion& q) const {
+    return Cuaternion(a - q.a, b - q.b, c - q.c, d - q.d);
+}
+Cuaternion Cuaternion::multiplicar(const Cuaternion& q) const {
+    return Cuaternion(
+        a * q.a - b * q.b - c * q.c - d * q.d, // Parte real
+        a * q.b + b * q.a + c * q.d - d * q.c, // Parte imaginaria i
+        a * q.c - b * q.d + c * q.a + d * q.b, // Parte imaginaria j
+        a * q.d + b * q.c - c * q.b + d * q.a  // Parte imaginaria k
+    );
+}
+Cuaternion Cuaternion::conjugado() const {
+    return Cuaternion(a, -b, -c, -d);
+}
+double Cuaternion::norma() const {
+    return sqrt(a * a + b * b + c * c + d * d);
+}
+Cuaternion Cuaternion::inversa() const {
+    double norm_sq = norma() * norma();
+    if (norm_sq == 0) {
+        cerr << "Error: Cuaternion nulo, no tiene inversa.\n";
+        return Cuaternion();
+    }
+    Cuaternion conj = conjugado();
+    return Cuaternion(conj.a / norm_sq, conj.b / norm_sq, conj.c / norm_sq, conj.d / norm_sq);
+}
+void Cuaternion::print() const {
+    cout << a;
+    if (b >= 0) cout << " + " << b << "i";
+    else cout << " - " << -b << "i";
+    if (c >= 0) cout << " + " << c << "j";
+    else cout << " - " << -c << "j";
+    if (d >= 0) cout << " + " << d << "k";
+    else cout << " - " << -d << "k";
+    cout << endl;
+}
+
+#endif 
+
+
+
+## Archivo Principal
+
+
+
+#include "complejos_cuaterniones.h"
+
+int main() {
+	
+//COMPLEJOS
+
+    Complejo C1(12.0, 8.0); // 12 + 8i
+    Complejo C2(2.0, -4.0); // 2 - 4i
+
+    Complejo C3 = C1.sumar(C2);
+    Complejo C4 = C1.restar(C2);
+    Complejo C5 = C1.multiplicar(C2);
+    Complejo C6 = C1.dividir(C2);
+
+    cout << "Numero complejo 1: ";
+    C1.imprimir();
+    cout << "Numero complejo 2: ";
+    C2.imprimir();
+    
+    cout << "Suma: ";
+    C3.imprimir();
+    
+    cout << "Resta: ";
+    C4.imprimir();
+    
+    cout << "Multiplicacion: ";
+    C5.imprimir();
+    
+    cout << "Division: ";
+    C6.imprimir();
+    
+//CUATERNIONES
+  
+    Cuaternion q1(3.0, 2.0, 9.0, 4.0); // 3 + 2i + 9j + 4k
+    Cuaternion q2(5.0, -6.0, 7.0, -8.0); // 5 - 6i + 7j - 8k
+
+    Cuaternion q3 = q1.sumar(q2);
+    Cuaternion q4 = q1.restar(q2);
+    Cuaternion q5 = q1.multiplicar(q2);
+    Cuaternion q6 = q1.conjugado();
+    Cuaternion q7 = q1.inversa();
+
+    cout << "\nCuaternion 1: ";
+    q1.print();
+    cout << "Cuaternion 2: ";
+    q2.print();
+    
+    cout << "Suma: ";
+    q3.print();
+    
+    cout << "Resta: ";
+    q4.print();
+    
+    cout << "Multiplicacion: ";
+    q5.print();
+    
+    cout << "Conjugado de q1: ";
+    q6.print();
+    
+    cout << "Inversa de q1: ";
+    q7.print();
+
+    return 0;
+}
